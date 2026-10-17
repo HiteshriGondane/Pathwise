@@ -1,0 +1,52 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#07130f"><title>Algorithm & Complexity | Pathwise Lab</title><link rel="stylesheet" href="styles.css"></head><body>
+<header class="topbar"><div class="wrap nav">
+<a class="brand" href="index.html"><span class="brandmark">↗</span><span>PATHWISE <span>LAB</span></span></a>
+<nav class="links" aria-label="Main navigation">
+<a href="ucs.html">UCS Basics</a><a href="algorithm.html">Algorithm</a><a href="applications.html">Applications</a><a href="demo.html">Live Demo</a><a class="navbtn" href="quiz.html">Flashcard Quiz ↗</a><a href="conclusion.html">Wrap-up</a>
+</nav></div></header>
+<main class="wrap">
+<div class="pagehead"><div class="crumb">02 / ALGORITHM</div><h1>How UCS <span class="shine">works</span></h1><p>Start with cost 0, repeatedly select the lowest-cost frontier path, and update neighbours whenever a cheaper route is found.</p></div>
+<section class="section"><div class="section-head"><h2>Algorithm steps</h2></div><div class="grid2">
+<div class="card"><ol class="list"><li>Put the start node in a priority queue with cost 0.</li><li>Remove the entry with the smallest total cost.</li><li>If it is the goal, return its path and total cost.</li><li>For each neighbour, calculate new cost = current cost + edge cost.</li><li>If this is a better cost, update the neighbour and add it to the queue.</li><li>Repeat until the goal is found or the queue is empty.</li></ol></div>
+<div class="card"><div class="eyebrow">Pseudocode</div><pre class="code">UCS(start, goal):
+    priorityQueue ← [(0, start)]
+    bestCost[start] ← 0
+    parent[start] ← null
+
+    while priorityQueue is not empty:
+        (cost, node) ← removeMin(priorityQueue)
+
+        if cost ≠ bestCost[node]:
+            continue
+
+        if node = goal:
+            return reconstructPath(parent, goal), cost
+
+        for each (neighbor, edgeCost) of node:
+            newCost ← cost + edgeCost
+
+            if neighbor not in bestCost
+               or newCost &lt; bestCost[neighbor]:
+                bestCost[neighbor] ← newCost
+                parent[neighbor] ← node
+                insert(priorityQueue,
+                       (newCost, neighbor))
+
+    return "No path found"</pre></div>
+</div></section>
+<section class="section"><div class="section-head"><h2>Formula used by UCS</h2><p>Use this equation when solving numerical questions.</p></div>
+<div class="card"><div class="callout" style="text-align:center;font-size:1.2rem"><b>g(next) = g(current) + c(current, next)</b></div>
+<p><b>g(next):</b> total cost from the start to the next node.</p><p><b>g(current):</b> best-known total cost from the start to the current node.</p><p><b>c(current, next):</b> cost written on the edge between these two nodes.</p><p><b>UCS rule:</b> remove and expand the valid frontier entry with the smallest g(n). If a cheaper route to a node is found, update its cost and parent.</p>
+<div class="callout"><b>Mini example:</b> g(A) = 4 and cost(A, B) = 3, so g(B) = 4 + 3 = 7.</div></div></section>
+<section class="section"><div class="section-head"><h2>Time and space complexity</h2><p>For a graph with V vertices and E edges, using a binary-heap priority queue.</p></div>
+<div class="metrics"><div class="metric"><small>Time complexity</small><strong>O((V + E) log V)</strong><small>Common graph implementation with a binary heap and suitable decrease/update handling.</small></div><div class="metric"><small>Space complexity</small><strong>O(V + E)</strong><small>Graph storage plus best costs, parents, visited/queue entries.</small></div><div class="metric"><small>Core data structure</small><strong>Priority queue</strong><small>Removes the path with the smallest cumulative cost.</small></div></div>
+<div class="callout">Complexity can vary with the priority-queue implementation. With a simple unsorted list, extracting the minimum can take O(V) each time, giving a less efficient bound.</div></section>
+<div class="actions"><a class="btn" href="ucs.html">← UCS Basics</a><a class="btn primary" href="applications.html">Next: Applications →</a></div>
+</main>
+<footer><div><strong>PATHWISE LAB</strong><br>Learn Uniform Cost Search by seeing how it works.</div>
+<div class="footlinks"><a href="ucs.html">UCS Basics</a><a href="algorithm.html">Algorithm</a><a href="applications.html">Applications</a><a href="demo.html">Live Demo</a><a href="quiz.html">Quiz</a></div>
+<div>Designed for learning · Runs in your browser · No sign-in required</div></footer>
+<script src="chat-config.js"></script>
+<script src="site.js"></script>
+<script src="chat-widget.js"></script>
+</body></html>

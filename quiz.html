@@ -1,0 +1,57 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#07130f"><title>Flashcard Quiz | Pathwise Lab</title><link rel="stylesheet" href="styles.css"></head><body>
+<header class="topbar"><div class="wrap nav">
+<a class="brand" href="index.html"><span class="brandmark">↗</span><span>PATHWISE <span>LAB</span></span></a>
+<nav class="links" aria-label="Main navigation">
+<a href="ucs.html">UCS Basics</a><a href="algorithm.html">Algorithm</a><a href="applications.html">Applications</a><a href="demo.html">Live Demo</a><a class="navbtn" href="quiz.html">Flashcard Quiz ↗</a><a href="conclusion.html">Wrap-up</a>
+</nav></div></header>
+<main class="wrap">
+<div class="pagehead"><div class="crumb">05 / FLASHCARD QUIZ</div><h1>Flip. Recall. <span class="shine">Learn.</span></h1><p>Try to answer before flipping each card. Use the controls to move through the deck, then reset to revise again.</p></div>
+<div class="quizwrap">
+<div class="card"><div class="eyebrow">UCS QUICK REVISION</div><div class="progress"><span id="bar"></span></div><div class="smalltext" id="count">Card 1 of 8</div>
+<div class="flashcard" id="card" tabindex="0" role="button" aria-label="Flashcard. Activate to reveal the answer."><div class="flashcard-inner" id="cardInner"><div class="flashcard-face flashcard-front"><div class="side">QUESTION</div><h2 id="front">What does UCS stand for?</h2><p id="hint">Think about how the algorithm chooses its next path.</p><div class="smalltext flip-prompt">Click or press Enter to flip</div></div><div class="flashcard-face flashcard-back"><div class="side">ANSWER</div><h2 id="backAnswer">Uniform Cost Search.</h2><p id="backHint">Take a moment to explain why this is true.</p><div class="smalltext flip-prompt">Click or press Enter to return</div></div></div></div>
+<div class="quizcontrols"><button class="btn" id="prev">← Previous</button><button class="btn primary" id="flip">Reveal answer</button><button class="btn" id="next">Next →</button></div>
+<div class="quizcontrols"><span class="smalltext" id="known">0 cards reviewed</span><button class="btn" id="restart">↺ Reset deck</button></div>
+</div>
+<section class="section" id="mcq-test"><div class="section-head"><div class="eyebrow">CHECK YOUR UNDERSTANDING</div><h2>Quick MCQ test</h2><p>Choose one answer for each question, then check your score. You can try again whenever you want.</p></div><div class="card mcq-card"><div class="progress"><span id="mcqBar"></span></div><div class="smalltext" id="mcqCount">Question 1 of 5</div><h3 id="mcqQuestion" style="margin:12px 0">What does UCS prioritize?</h3><div id="mcqOptions" class="mcq-options"></div><p id="mcqFeedback" class="muted" aria-live="polite"></p><div class="quizcontrols"><button class="btn" id="mcqReset">↺ Restart test</button><button class="btn primary" id="mcqCheck">Check answer</button><button class="btn" id="mcqNext">Next →</button></div><h3 id="mcqScore" aria-live="polite"></h3></div></section>
+<div class="callout">Study tip: say the answer out loud before flipping the card. If you cannot explain it in one sentence, revisit the <a href="ucs.html" style="color:var(--green);text-decoration:underline">UCS Basics</a> page.</div>
+</div>
+</main>
+<footer><div><strong>PATHWISE LAB</strong><br>Learn Uniform Cost Search by seeing how it works.</div>
+<div class="footlinks"><a href="ucs.html">UCS Basics</a><a href="algorithm.html">Algorithm</a><a href="applications.html">Applications</a><a href="demo.html">Live Demo</a><a href="quiz.html">Quiz</a></div>
+<div>Designed by Hiteshri Gondane · Runs in your browser · No sign-in required</div></footer>
+
+<script>
+(()=>{
+const cards=[
+['What does UCS stand for?','Uniform Cost Search.','Recall the name of the pathfinding algorithm.'],
+['How does UCS choose the next path?','It expands the frontier entry with the lowest cumulative cost.','Think about the priority queue.'],
+['Which data structure is commonly used?','A priority queue (min-priority queue).','It needs to quickly select the smallest cost.'],
+['What must edge costs be for the optimality guarantee?','Non-negative.','Negative edges can make a previously costly route become cheaper later.'],
+['When should UCS stop and return the goal?','When the goal is removed from the priority queue as the cheapest valid entry.','Finding the goal as a neighbour is not enough.'],
+['What is the common binary-heap time complexity?','O((V + E) log V), for a standard graph implementation.','V is vertices and E is edges.'],
+['What is the typical graph space complexity?','O(V + E), including graph storage and search data.','Count the graph and the data maintained by the search.'],
+['When may BFS be simpler than UCS?','When all edges have equal cost and the goal is the fewest-edge path.','Compare what each algorithm optimizes.']
+];
+let i=0,flipped=false,reviewed=new Set();
+const $=id=>document.getElementById(id);
+function show(){flipped=false;$('card').classList.remove('is-flipped');$('front').textContent=cards[i][0];$('hint').textContent=cards[i][2];$('backAnswer').textContent=cards[i][1];$('backHint').textContent='Take a moment to explain why this is true.';$('flip').textContent='Reveal answer';$('card').setAttribute('aria-label','Flashcard question: '+cards[i][0]+'. Activate to reveal the answer.');$('count').textContent='Card '+(i+1)+' of '+cards.length;$('bar').style.width=((i+1)/cards.length*100)+'%';$('known').textContent=reviewed.size+' card'+(reviewed.size===1?'':'s')+' reviewed';}
+function flip(){flipped=!flipped;$('card').classList.toggle('is-flipped',flipped);$('flip').textContent=flipped?'Show question':'Reveal answer';$('card').setAttribute('aria-label',flipped?'Flashcard answer: '+cards[i][1]+'. Activate to return to the question.':'Flashcard question: '+cards[i][0]+'. Activate to reveal the answer.');if(flipped)reviewed.add(i);$('known').textContent=reviewed.size+' card'+(reviewed.size===1?'':'s')+' reviewed'}
+
+const mcqs=[
+{q:'What does UCS choose to expand next?',o:['The node with the fewest letters','The lowest-cost valid entry in the priority queue','The goal node immediately','The most recently added node'],a:1,e:'UCS always expands the frontier entry with the smallest cumulative path cost.'},
+{q:'Which data structure is commonly used by UCS?',o:['Stack','普通 queue','Min-priority queue','Hash-only table'],a:2,e:'A min-priority queue lets UCS select the lowest-cost entry.'},
+{q:'When is it safe to finalize the goal in UCS?',o:['When the goal is first discovered as a neighbour','When the goal is removed as the cheapest valid queue entry','At the start of the search','After visiting every node'],a:1,e:'The goal is finalized when it is removed from the queue with its lowest valid cost.'},
+{q:'What is the usual edge-cost condition for UCS optimality?',o:['All costs must be negative','Costs must be non-negative','Every edge must cost exactly 1','Costs must be alphabetical'],a:1,e:'UCS is optimal for non-negative edge costs.'},
+{q:'What does UCS minimize?',o:['Number of nodes in the graph','Number of letters in node names','Total path cost','Number of pages in a website'],a:2,e:'UCS minimizes the sum of edge costs along the selected path.'}
+];
+let qi=0,answers=Array(mcqs.length).fill(null),checked=Array(mcqs.length).fill(false);
+function renderMcq(){const q=mcqs[qi];$('mcqQuestion').textContent=q.q;$('mcqCount').textContent='Question '+(qi+1)+' of '+mcqs.length;$('mcqBar').style.width=((qi+1)/mcqs.length*100)+'%';$('mcqOptions').replaceChildren();q.o.forEach((opt,j)=>{const label=document.createElement('label');label.className='mcq-option';const radio=document.createElement('input');radio.type='radio';radio.name='mcqAnswer';radio.value=j;radio.checked=answers[qi]===j;radio.addEventListener('change',()=>{answers[qi]=j;$('mcqFeedback').textContent='';});const span=document.createElement('span');span.textContent=opt;label.append(radio,span);$('mcqOptions').append(label)});$('mcqFeedback').textContent=checked[qi]?(answers[qi]===q.a?'Correct! ':'Not quite. ')+q.e:'';$('mcqScore').textContent=checked.every(Boolean)?'Final score: '+answers.filter((a,i)=>a===mcqs[i].a).length+' / '+mcqs.length:'';$('mcqCheck').disabled=checked[qi];$('mcqNext').textContent=qi===mcqs.length-1?'Finish':'Next →';}
+$('mcqCheck').addEventListener('click',()=>{if(answers[qi]===null){$('mcqFeedback').textContent='Choose an answer first.';return}checked[qi]=true;renderMcq()});$('mcqNext').addEventListener('click',()=>{if(qi<mcqs.length-1){qi++;renderMcq()}else{$('mcqScore').textContent='Final score: '+answers.filter((a,i)=>a===mcqs[i].a).length+' / '+mcqs.length;$('mcqFeedback').textContent='Test complete. Restart to practice again.'}});$('mcqReset').addEventListener('click',()=>{qi=0;answers=Array(mcqs.length).fill(null);checked=Array(mcqs.length).fill(false);renderMcq()});renderMcq();
+$('card').addEventListener('click',flip);$('card').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();flip()}});
+$('flip').addEventListener('click',flip);$('prev').addEventListener('click',()=>{i=(i+cards.length-1)%cards.length;show()});$('next').addEventListener('click',()=>{i=(i+1)%cards.length;show()});$('restart').addEventListener('click',()=>{i=0;reviewed.clear();show()});show();
+})();
+</script>
+<script src="chat-config.js"></script>
+<script src="site.js"></script>
+<script src="chat-widget.js"></script>
+</body></html>

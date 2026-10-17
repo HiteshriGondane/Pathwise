@@ -1,0 +1,9 @@
+name = "pathwise-lab-chatbot"
+main = "index.js"
+compatibility_date = "2026-10-17"
+
+[vars]
+# Set this to the ORIGIN only, e.g. https://hiteshrigondane.github.io
+# Do not include the repository path or a trailing slash.
+ALLOWED_ORIGIN = "https://YOUR-GITHUB-USERNAME.github.io"
+OPENAI_MODEL = "gpt-4.1-mini"

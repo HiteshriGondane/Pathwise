@@ -1,0 +1,92 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#07130f"><title>Live Demo | Pathwise Lab</title><link rel="stylesheet" href="styles.css"></head><body>
+<header class="topbar"><div class="wrap nav">
+<a class="brand" href="index.html"><span class="brandmark">↗</span><span>PATHWISE <span>LAB</span></span></a>
+<nav class="links" aria-label="Main navigation">
+<a href="ucs.html">UCS Basics</a><a href="algorithm.html">Algorithm</a><a href="applications.html">Applications</a><a href="demo.html">Live Demo</a><a class="navbtn" href="quiz.html">Flashcard Quiz ↗</a><a href="conclusion.html">Wrap-up</a>
+</nav></div></header>
+<main class="wrap">
+<div class="pagehead"><div class="crumb">04 / LIVE DEMO</div><h1>Watch UCS <span class="shine">choose</span></h1><p>Use the sample graph first. Press Run to see the cheapest-first search, Step to move one event at a time, and Reset to start again.</p></div>
+<div class="demo-layout">
+<section class="card"><div class="eyebrow">Graph input</div><h2 style="margin-top:4px">Set your graph</h2><p class="muted" style="font-size:.85rem">One edge per line: From, To, Cost. The graph is undirected. Costs must be non-negative.</p>
+<div class="formfield"><label for="edges">Weighted edges</label><textarea id="edges">S, A, 2
+S, B, 5
+A, C, 2
+A, D, 7
+C, G, 3
+B, D, 1
+D, G, 4</textarea></div>
+<div class="grid2"><div class="formfield"><label for="start">Start node</label><select id="start" aria-label="Choose start node"><option>S</option></select></div><div class="formfield"><label for="goal">Goal node</label><select id="goal" aria-label="Choose goal node"><option>G</option></select></div></div><p class="smalltext">Choose any node from your graph. The options update when you edit the edges.</p>
+<div class="formfield"><label for="speed">Animation speed</label><select id="speed"><option value="1100">Slow</option><option value="650" selected>Normal</option><option value="250">Fast</option></select></div>
+<div class="btnrow"><button class="btn primary" id="run">▶ Run</button><button class="btn" id="step">Step →</button><button class="btn" id="pause">Ⅱ Pause</button><button class="btn" id="reset">↺ Reset</button></div><p id="error" class="error" role="alert"></p>
+<div class="callout" style="font-size:.85rem">Tip: choose <b>Step</b> to understand each queue decision. The goal is finalized when it is removed as the cheapest valid entry.</div>
+</section>
+<section>
+<div class="card graphbox"><div class="graphhead"><div><b>Weighted graph</b><br><small id="graphMeta">Ready · sample graph</small></div><span class="status" id="status">READY</span></div><svg id="graph" viewBox="0 0 650 390" role="img" aria-label="UCS weighted graph visualization"></svg><div class="result"><div class="eyebrow">RESULT</div><div id="resultText">Your lowest-cost path will appear here.</div><div class="resultpath" id="pathChips"></div></div></div>
+<div class="trace"><div class="card"><div class="eyebrow">Current step <span id="stepCount" style="float:right">0 / 0</span></div><h3 id="stepTitle">Ready to begin</h3><p class="muted" id="stepText">The start node will enter the priority queue with cost 0.</p><div class="eyebrow" style="margin-top:16px">Priority queue</div><div id="queueText" class="muted">Not started</div></div><div class="card"><div class="eyebrow">Search log</div><ol id="log"><li class="muted">Run the algorithm to see the steps.</li></ol></div></div>
+</section></div>
+</main>
+<footer><div><strong>PATHWISE LAB</strong><br>Learn Uniform Cost Search by seeing how it works.</div>
+<div class="footlinks"><a href="ucs.html">UCS Basics</a><a href="algorithm.html">Algorithm</a><a href="applications.html">Applications</a><a href="demo.html">Live Demo</a><a href="quiz.html">Quiz</a></div>
+<div>Designed by Hiteshri Gondane · Runs in your browser · No sign-in required</div></footer>
+
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+const sample=`S, A, 2\nS, B, 5\nA, C, 2\nA, D, 7\nC, G, 3\nB, D, 1\nD, G, 4`;
+let graph={},edges=[],coords={},events=[],idx=0,timer=null,done=false,paused=false,finalPath=[],finalCost=null;
+const coordPool=[[70,190],[180,80],[180,300],[320,85],[360,290],[510,190],[520,75],[515,310],[285,190],[420,185],[110,70],[110,310]];
+function refreshNodeOptions(){const oldS=$('start').value,oldG=$('goal').value;const names=new Set();$('edges').value.split(/\n/).forEach(line=>{const p=line.split(',').map(x=>x.trim());if(p.length>=2&&p[0]&&p[1]){names.add(p[0]);names.add(p[1])}});const arr=[...names].slice(0,12);if(!arr.length)return;for(const id of ['start','goal']){const sel=$(id);sel.replaceChildren(...arr.map(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;return o}));} $('start').value=arr.includes(oldS)?oldS:arr[0];$('goal').value=arr.includes(oldG)?oldG:(arr.includes('G')?'G':arr[arr.length-1]);}
+function parse(){
+ graph={};edges=[];let seen=new Set();
+ const lines=$('edges').value.split(/\n/).map(s=>s.trim()).filter(Boolean);
+ for(let line of lines){let p=line.split(',').map(s=>s.trim());if(p.length!==3||!p[0]||!p[1])throw Error('Use one edge per line: From, To, Cost.');
+ let [a,b,c]=p;let w=Number(c);if(!Number.isFinite(w)||w<0)throw Error('Edge costs must be valid non-negative numbers.');
+ if(a===b)throw Error('Self-loops are not supported in this simple demo.');
+ if(!graph[a])graph[a]=[];if(!graph[b])graph[b]=[];
+ let key=[a,b].sort().join('|');if(seen.has(key))throw Error('Duplicate edge: '+a+'–'+b+'.');seen.add(key);
+ graph[a].push({to:b,w});graph[b].push({to:a,w});edges.push({a,b,w});
+ }
+ if(!edges.length)throw Error('Add at least one edge.');
+ let s=$('start').value.trim(),g=$('goal').value.trim();if(!graph[s]||!graph[g])throw Error('Start and goal must both exist in the graph.');
+ if(Object.keys(graph).length>12)throw Error('For a clear visual layout, use 12 nodes or fewer.');
+ return {s,g};
+}
+function layout(){let names=Object.keys(graph);coords={};let cx=325,cy=195,rx=235,ry=135;names.forEach((n,i)=>{let angle=-Math.PI/2+2*Math.PI*i/names.length;coords[n]=[cx+Math.cos(angle)*rx,cy+Math.sin(angle)*ry]})}
+function svgEl(tag,attrs={},txt=''){let e=document.createElementNS('http://www.w3.org/2000/svg',tag);Object.entries(attrs).forEach(([k,v])=>e.setAttribute(k,v));if(txt)e.textContent=txt;return e}
+function renderGraph(){
+ layout();let svg=$('graph');svg.replaceChildren();let current=events[Math.max(0,idx-1)]||{};let activeNode=(current.title||'').startsWith('Expand ')?current.title.slice(7):'';
+ edges.forEach(e=>{let [x1,y1]=coords[e.a],[x2,y2]=coords[e.b];let isPath=done&&finalPath.length>1&&finalPath.some((n,i)=>i<finalPath.length-1&&((n===e.a&&finalPath[i+1]===e.b)||(n===e.b&&finalPath[i+1]===e.a)));svg.append(svgEl('line',{x1,y1,x2,y2,class:'edge'+(isPath?' path':'')}));let mx=(x1+x2)/2,my=(y1+y2)/2;svg.append(svgEl('text',{x:mx,y:my-8,class:'weight'},e.w))});
+ Object.keys(graph).forEach(n=>{let [x,y]=coords[n],cls='node';if(finalPath.includes(n)&&done)cls+=' path';else if(n===activeNode)cls+=' active';else if(current.frontier&&current.frontier.includes(n))cls+=' frontier';let g=svgEl('g',{class:cls});g.append(svgEl('circle',{cx:x,cy:y,r:23}));g.append(svgEl('text',{x,y},n));svg.append(g)});
+}
+function prepare(){
+ clearInterval(timer);timer=null;paused=false;done=false;idx=0;events=[];finalPath=[];finalCost=null;$('error').textContent='';let {s,g}=parse();
+ let best={[s]:0},parent={},pq=[{n:s,c:0}],closed=new Set();events.push({title:'Start at '+s,text:'Insert '+s+' into the priority queue with cost 0.',queue:[...pq],frontier:[s],log:'Start '+s+' with cost 0.'});
+ while(pq.length){
+ pq.sort((a,b)=>a.c-b.c);let cur=pq.shift();if(cur.c!==best[cur.n])continue;
+ if(closed.has(cur.n))continue;closed.add(cur.n);
+ events.push({title:'Expand '+cur.n,text:'Remove '+cur.n+' from the queue because its current cost '+cur.c+' is the lowest.',queue:pq.map(x=>({...x})),frontier:pq.map(x=>x.n),log:'Expand '+cur.n+' at cost '+cur.c+'.'});
+ if(cur.n===g){finalCost=cur.c;let p=[],v=g;while(v!==undefined){p.unshift(v);if(v===s)break;v=parent[v]}if(p[0]===s)finalPath=p;events.push({title:'Goal reached!',text:'The cheapest valid goal entry is removed. Total path cost = '+cur.c+'.',queue:pq.map(x=>({...x})),frontier:pq.map(x=>x.n),log:'Goal '+g+' reached at cost '+cur.c+'.'});break}
+ for(let nb of graph[cur.n]){let nc=cur.c+nb.w;if(best[nb.to]===undefined||nc<best[nb.to]){best[nb.to]=nc;parent[nb.to]=cur.n;pq.push({n:nb.to,c:nc});events.push({title:'Update '+nb.to,text:'Via '+cur.n+', cost becomes '+nc+' (edge cost '+nb.w+'). Add/update it in the queue.',queue:pq.map(x=>({...x})),frontier:pq.map(x=>x.n),log:'Update '+nb.to+' → cost '+nc+'.'})}}
+ }
+ if(finalCost===null)events.push({title:'No path found',text:'The goal cannot be reached from the start node.',queue:[],frontier:[],log:'No path found.'});
+ $('graphMeta').textContent=Object.keys(graph).length+' nodes · '+edges.length+' edges';$('resultText').textContent='Search prepared. Press Run or Step.';$('pathChips').replaceChildren();$('log').replaceChildren();renderGraph();updateUI();
+}
+function updateUI(){let ev=events[Math.max(0,idx-1)];if(!ev){$('stepTitle').textContent='Ready to begin';$('stepText').textContent='Press Run or Step to start.';$('queueText').textContent='Not started';return}
+ $('stepTitle').textContent=ev.title;$('stepText').textContent=ev.text;$('stepCount').textContent=idx+' / '+events.length;$('queueText').textContent=ev.queue.length?ev.queue.slice().sort((a,b)=>a.c-b.c).map(x=>x.n+' ('+x.c+')').join('  →  '):'Empty';$('status').textContent=done?'COMPLETE':paused?'PAUSED':idx?'RUNNING':'READY';
+ $('log').replaceChildren();events.slice(0,idx).slice(-9).forEach(x=>{let li=document.createElement('li');li.textContent=x.log;$('log').append(li)});
+ if(done&&finalCost!==null){$('resultText').innerHTML='Lowest total cost: <b>'+finalCost+'</b>';let chips=[];finalPath.forEach((n,i)=>{if(i){let a=document.createElement('span');a.textContent='→';a.style.color='var(--green)';chips.push(a)}let p=document.createElement('span');p.className='pill';p.textContent=n;chips.push(p)});$('pathChips').replaceChildren(...chips)}
+ renderGraph();
+}
+function next(){if(idx>=events.length){done=true;clearInterval(timer);timer=null;updateUI();return}idx++;if(idx>=events.length)done=true;updateUI();if(done){clearInterval(timer);timer=null}}
+function run(){if(!events.length){try{prepare()}catch(e){$('error').textContent=e.message;return}}if(done){return}paused=false;clearInterval(timer);timer=setInterval(next,Number($('speed').value));next()}
+function reset(){clearInterval(timer);timer=null;try{prepare()}catch(e){$('error').textContent=e.message;$('graph').replaceChildren();$('resultText').textContent='Fix the graph input, then press Reset.'}}
+$('run').addEventListener('click',run);$('step').addEventListener('click',()=>{if(!events.length){try{prepare()}catch(e){$('error').textContent=e.message;return}}clearInterval(timer);timer=null;paused=true;next()});
+$('pause').addEventListener('click',()=>{if(timer){clearInterval(timer);timer=null;paused=true;updateUI()}else if(paused&&!done)run()});
+$('reset').addEventListener('click',reset);$('speed').addEventListener('change',()=>{if(timer){clearInterval(timer);timer=setInterval(next,Number($('speed').value))}});
+$('edges').addEventListener('input',()=>{$('error').textContent='';refreshNodeOptions()});$('start').addEventListener('change',()=>{if(!timer)reset()});$('goal').addEventListener('change',()=>{if(!timer)reset()});refreshNodeOptions();try{prepare()}catch(e){$('error').textContent=e.message}
+})();
+</script>
+<script src="chat-config.js"></script>
+<script src="site.js"></script>
+<script src="chat-widget.js"></script>
+</body></html>

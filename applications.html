@@ -1,0 +1,34 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#07130f"><title>Applications | Pathwise Lab</title><link rel="stylesheet" href="styles.css"></head><body>
+<header class="topbar"><div class="wrap nav">
+<a class="brand" href="index.html"><span class="brandmark">↗</span><span>PATHWISE <span>LAB</span></span></a>
+<nav class="links" aria-label="Main navigation">
+<a href="ucs.html">UCS Basics</a><a href="algorithm.html">Algorithm</a><a href="applications.html">Applications</a><a href="demo.html">Live Demo</a><a class="navbtn" href="quiz.html">Flashcard Quiz ↗</a><a href="conclusion.html">Wrap-up</a>
+</nav></div></header>
+<main class="wrap">
+<div class="pagehead"><div class="crumb">03 / APPLICATIONS</div><h1>Where is UCS <span class="shine">used?</span></h1><p>UCS is useful when routes have different costs and you need the minimum total cost, not necessarily the fewest steps.</p></div>
+<section class="section"><div class="grid3">
+<div class="tile"><div class="icon">🚗</div><h3>Route planning</h3><p>Find a route with the lowest travel cost when roads have different tolls or distances.</p></div>
+<div class="tile"><div class="icon">🤖</div><h3>Robotics</h3><p>Explore possible movements when each move has a different energy or movement cost.</p></div>
+<div class="tile"><div class="icon">🎮</div><h3>Game AI</h3><p>Choose a low-cost path through a map where terrain or actions have different costs.</p></div>
+<div class="tile"><div class="icon">🌐</div><h3>Network routing</h3><p>Find a minimum-cost route through a network when link weights represent cost.</p></div>
+<div class="tile"><div class="icon">🧩</div><h3>State-space search</h3><p>Find a least-cost sequence of actions when each action has a non-negative cost.</p></div>
+<div class="tile"><div class="icon">📦</div><h3>Logistics</h3><p>Compare transport routes where fuel, distance, or delivery charges affect total cost.</p></div>
+</div></section>
+<section class="section"><div class="section-head"><h2>When should you use UCS?</h2><p>Check the problem conditions before choosing the algorithm.</p></div>
+<div class="tablewrap"><table><thead><tr><th>Situation</th><th>Is UCS suitable?</th><th>Reason</th></tr></thead><tbody>
+<tr><td>Edge costs differ and are non-negative</td><td>Yes</td><td>It finds the minimum cumulative cost.</td></tr>
+<tr><td>Every edge has the same cost</td><td>Usually, but BFS may be simpler</td><td>BFS finds a minimum-edge path when all edges cost the same.</td></tr>
+<tr><td>Negative edge costs are allowed</td><td>No guarantee</td><td>Use an algorithm designed for negative weights, such as Bellman–Ford, when appropriate.</td></tr>
+<tr><td>You have a useful goal-directed heuristic</td><td>Consider A*</td><td>A* can guide the search with a suitable admissible heuristic.</td></tr>
+<tr><td>Only the fewest number of edges matters</td><td>Usually BFS</td><td>Edge count, rather than weighted cost, is the objective.</td></tr>
+</tbody></table></div>
+<div class="callout"><b>Quick rule:</b> UCS = least total cost; BFS = fewest edges in an unweighted/equal-cost graph; A* = cost plus a heuristic estimate.</div></section>
+<div class="actions"><a class="btn" href="algorithm.html">← Algorithm</a><a class="btn primary" href="demo.html">Try the Live Demo →</a></div>
+</main>
+<footer><div><strong>PATHWISE LAB</strong><br>Learn Uniform Cost Search by seeing how it works.</div>
+<div class="footlinks"><a href="ucs.html">UCS Basics</a><a href="algorithm.html">Algorithm</a><a href="applications.html">Applications</a><a href="demo.html">Live Demo</a><a href="quiz.html">Quiz</a></div>
+<div>Designed for learning · Runs in your browser · No sign-in required</div></footer>
+<script src="chat-config.js"></script>
+<script src="site.js"></script>
+<script src="chat-widget.js"></script>
+</body></html>
