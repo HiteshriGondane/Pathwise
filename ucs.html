@@ -1,0 +1,36 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#07130f"><title>UCS Basics | Pathwise Lab</title><link rel="stylesheet" href="styles.css"></head><body>
+<header class="topbar"><div class="wrap nav">
+<a class="brand" href="index.html"><span class="brandmark">↗</span><span>PATHWISE <span>LAB</span></span></a>
+<nav class="links" aria-label="Main navigation">
+<a href="ucs.html">UCS Basics</a><a href="algorithm.html">Algorithm</a><a href="applications.html">Applications</a><a href="demo.html">Live Demo</a><a class="navbtn" href="quiz.html">Flashcard Quiz ↗</a><a href="conclusion.html">Wrap-up</a>
+</nav></div></header>
+<main class="wrap">
+<div class="pagehead"><div class="crumb">01 / UCS BASICS</div><h1>What does <span class="shine">UCS</span> mean?</h1><p>Uniform Cost Search is a pathfinding algorithm that always explores the route with the lowest total cost found so far.</p></div>
+<div class="grid2">
+<section class="card"><div class="eyebrow">In simple words</div><h2>Cheapest route first.</h2><p class="muted">Imagine travelling between cities. Each road has a price or distance. UCS checks the cheapest possible journey so far before trying a more expensive one.</p><div class="callout"><b>Remember:</b> UCS compares the sum of edge costs from the start—not simply how many steps a path has.</div></section>
+<section class="card"><div class="eyebrow">Example</div><h2>Shorter is not always cheaper.</h2><p class="muted">Route S → B → G has 2 edges costing 5 + 8 = 13. Route S → A → C → G has 3 edges costing 2 + 2 + 3 = 7. UCS chooses the second route because 7 is less than 13.</p><a class="btn primary" href="demo.html">See this in action →</a></section>
+</div>
+<section class="section"><div class="section-head"><div class="eyebrow">The key formula</div><h2>UCS path-cost formula</h2><p>The priority of a node is its total cost from the start node.</p></div>
+<section class="card"><div class="callout" style="text-align:center;font-size:1.25rem"><b>f(n) = g(n) = g(parent(n)) + c(parent(n), n)</b></div>
+<p class="muted">For the start node, <b>g(start) = 0</b>. For any next node, add the edge cost to the total cost used to reach its parent.</p>
+<div class="grid2">
+<div class="tile"><h3>f(n) — priority of node n</h3><p>The value UCS uses to decide which frontier node to expand next. In UCS, f(n) = g(n).</p></div>
+<div class="tile"><h3>g(n) — cumulative path cost</h3><p>The sum of all edge costs along the path from the start node to node n.</p></div>
+<div class="tile"><h3>parent(n) — previous node</h3><p>The node immediately before n on the current best-known path.</p></div>
+<div class="tile"><h3>c(parent(n), n) — edge cost</h3><p>The cost of moving directly from the parent node to node n, such as distance, time, or money.</p></div>
+</div>
+<div class="callout"><b>Example:</b> If the cost to reach A is g(A) = 4 and edge A → B costs 3, then g(B) = 4 + 3 = 7. UCS gives B priority 7 and expands the frontier node with the smallest cumulative cost first.</div></section></section>
+<section class="section"><div class="section-head"><div class="eyebrow">Conditions to remember</div><h2>When does UCS give the optimal route?</h2></div><div class="grid3">
+<div class="tile"><h3>01. Non-negative costs</h3><p>Every edge cost must be zero or positive. Negative edge costs can break UCS's optimality guarantee.</p></div>
+<div class="tile"><h3>02. Cheapest-first queue</h3><p>The frontier must be ordered by cumulative path cost, usually with a priority queue.</p></div>
+<div class="tile"><h3>03. Goal is removed</h3><p>Stop when the goal is removed from the priority queue as the cheapest valid entry—not merely when first discovered.</p></div>
+</div><div class="callout">UCS is complete under the usual finite-branching assumptions when step costs are bounded below by a positive value. With zero-cost edges, termination depends on the graph/search handling and assumptions.</div></section>
+<div class="actions"><a class="btn" href="index.html">← Home</a><a class="btn primary" href="algorithm.html">Next: Algorithm →</a></div>
+</main>
+<footer><div><strong>PATHWISE LAB</strong><br>Learn Uniform Cost Search by seeing how it works.</div>
+<div class="footlinks"><a href="ucs.html">UCS Basics</a><a href="algorithm.html">Algorithm</a><a href="applications.html">Applications</a><a href="demo.html">Live Demo</a><a href="quiz.html">Quiz</a></div>
+<div>Designed for learning · Runs in your browser · No sign-in required</div></footer>
+<script src="chat-config.js"></script>
+<script src="site.js"></script>
+<script src="chat-widget.js"></script>
+</body></html>
